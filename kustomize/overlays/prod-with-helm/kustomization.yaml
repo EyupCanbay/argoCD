@@ -3,7 +3,7 @@ kind: Kustomization
 
 helmCharts:
   - name: grade-submission
-    repo: "C:/Users/canbay/Desktop/argocd-kubernetes-gitops-tutorial/helm/grade-submission"  
+    repo: "file://../../../helm/grade-submission"
     releaseName: prod-release
     version: 0.1.0
     valuesFile: values.yaml
