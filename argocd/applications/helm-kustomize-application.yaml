@@ -10,8 +10,6 @@ spec:
     repoURL:  https://github.com/EyupCanbay/argocd
     targetRevision: HEAD
     path: kustomize/overlays/prod-with-helm
-    kustomize:
-      enableHelm: true
   
   destination:
     server: https://kubernetes.default.svc
