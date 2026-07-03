@@ -34,3 +34,7 @@ spec:
       kind: Deployment
       jsonPointers:
         - /spec/replicas
+        
+  configs:
+    cm:
+      kustomize.buildOptions: "--enable-helm"
