@@ -8,19 +8,12 @@ spec:
   
   source:
     repoURL:  https://github.com/EyupCanbay/argocd
-    targetRevision: main
+    targetRevision: HEAD
     path: kustomize/overlays/prod-with-helm
-    
-    kustomize:
-      helmCharts:
-        - name: grade-submission
-          releaseName: prod-release
-          version: 0.2.0
-          chartPath: helm/grade-submission
   
   destination:
     server: https://kubernetes.default.svc
-    namespace: production
+    namespace: grade-demo-helm-kustomize
   
   syncPolicy:
     automated:
