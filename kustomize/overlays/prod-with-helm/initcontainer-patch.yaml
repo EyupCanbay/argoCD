@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prod-release-grade-submission-api
+spec:
+  template:
+    spec:
+      initContainers:
+      - name: init-setup
+        image: busybox:1.35
+        command: ['sh', '-c']
+        args:
+          - |
+            echo "Initializing application..."
+            echo "Running database migrations..."
+            sleep 15
+            echo "Initialization complete!"
+        resources:
+          limits:
+            cpu: 100m
+            memory: 64Mi
+          requests:
+            cpu: 50m
+            memory: 32Mi
