@@ -1,0 +1,48 @@
+global:
+  enabled: true
+
+injector:
+  enabled: true
+
+server:
+
+  serviceAccount:
+    create: true
+
+    annotations:
+      eks.amazonaws.com/role-arn: arn:aws:iam::482622963333:role/ob-lab-eks-vault-kms-role
+
+  ha:
+    enabled: true
+
+    replicas: 3
+
+    raft:
+      enabled: true
+
+      setNodeId: true
+
+      config: |
+        ui = true
+
+        listener "tcp" {
+          tls_disable = 1
+          address = "[::]:8200"
+          cluster_address = "[::]:8201"
+        }
+
+        storage "raft" {
+          path = "/vault/data"
+        }
+
+        seal "awskms" {
+          region = "eu-central-1"
+          kms_key_id = "f0372e3d-e656-429a-a58a-2057e61d7a2f"
+        }
+
+  dataStorage:
+    enabled: true
+
+    size: 10Gi
+
+    storageClass: gp2
