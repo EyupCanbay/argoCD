@@ -3,7 +3,7 @@ include "root" {
 }
 
 terraform {
-    source = "."
+    source = "../../modules/eks"
 }
 
 dependency "vpc" {
@@ -17,9 +17,8 @@ dependency "vpc" {
 
 inputs = {
     cluster_name    = "ob-lab-eks"
-    cluster_version = "1.34"
+    cluster_version = "1.35"
     
     vpc_id     = dependency.vpc.outputs.vpc_id
     subnet_ids = dependency.vpc.outputs.private_subnets
 }
-
