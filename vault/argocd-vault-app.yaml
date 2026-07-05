@@ -6,12 +6,21 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: "https://github.com/EyupCanbay/argocd"
+    repoURL: 'https://github.com/EyupCanbay/argocd'
     path: vault
     targetRevision: HEAD
   destination:
-    server: "https://kubernetes.default.svc"
+    server: 'https://kubernetes.default.svc'
     namespace: vault
+  
+  # İŞTE EKLENECEK KISIM BURASI
+  ignoreDifferences:
+    - group: admissionregistration.k8s.io
+      kind: MutatingWebhookConfiguration
+      name: vault-agent-injector-cfg
+      jqPathExpressions:
+        - '.webhooks[].clientConfig.caBundle'
+        
   syncPolicy:
     automated:
       prune: true

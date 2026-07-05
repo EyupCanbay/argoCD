@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vault-setup-script
+  namespace: vault
+data:
+  setup.sh: |
+    #!/bin/sh
+    echo "Vault K8s Auth motoru aktif ediliyor..."
+    vault auth enable kubernetes || true
+
+    echo "K8s API adresi Vault'a tanitiliyor (AWS EKS Uyumlu)..."
+    vault write auth/kubernetes/config \
+      kubernetes_host="https://172.20.0.1:443" \
+      kubernetes_ca_cert=@/var/run/secrets/kubernetes.io/serviceaccount/ca.crt \
+      disable_iss_validation=true
+
+    echo "ESO icin Okuma Yetkisi (Policy) yaziliyor..."
+    cat <<EOF > /tmp/eso-policy.hcl
+    path "secret/data/*" {
+      capabilities = ["read"]
+    }
+    EOF
+    vault policy write eso-read-policy /tmp/eso-policy.hcl
+
+    echo "ServiceAccount ile Role eslestiriliyor..."
+    vault write auth/kubernetes/role/eso-role \
+      bound_service_account_names=demo-app-sa \
+      bound_service_account_namespaces=demo-app \
+      policies=eso-read-policy \
+      ttl=1h
+      
+    echo "Islem Tamamlandi!"
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: vault-bootstrap
+  namespace: vault
+spec:
+  template:
+    spec:
+      containers:
+      - name: vault-cli
+        image: hashicorp/vault:1.16.1
+        command: ["/bin/sh", "/scripts/setup.sh"]
+        env:
+        - name: VAULT_ADDR
+          value: "http://vault-internal:8200"
+        - name: VAULT_TOKEN
+          value: "" 
+        volumeMounts:
+        - name: script-volume
+          mountPath: /scripts
+      restartPolicy: OnFailure
+      volumes:
+      - name: script-volume
+        configMap:
+          name: vault-setup-script
