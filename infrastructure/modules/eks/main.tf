@@ -58,6 +58,18 @@ module "eks" {
   }
 
   enable_cluster_creator_admin_permissions = true
+
+  node_security_group_additional_rules = {
+    
+    ingress_vault_webhook_8080 = {
+      description                   = "Allow EKS Control Plane to access Vault Webhook (Port 8080)"
+      protocol                      = "tcp"
+      from_port                     = 8080
+      to_port                       = 8080
+      type                          = "ingress"
+      source_cluster_security_group = true # İsteğin sadece EKS Master Node'larından gelebilmesini sağlar
+    }
+  }
 }
 
 output "cluster_name" {
