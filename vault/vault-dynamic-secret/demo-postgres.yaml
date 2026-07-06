@@ -9,30 +9,30 @@ spec:
   - protocol: TCP
     port: 5432
     targetPort: 5432
---- 
+---
 apiVersion: apps/v1
-kind: Deployment 
+kind: Deployment
 metadata:
-  name: demo-postgres 
-spec: 
+  name: demo-postgres
+spec:
   replicas: 1
-  selector: 
+  selector:
     matchLabels:
-      app: demo-postgres 
+      app: demo-postgres
   template:
-      metadata:
-        labels:
-          app: demo-postgres 
-      spec:
-        containers:
-        - name: postgres 
-          image: postgres:15-alpine
-          env:
-          - name: POSTGRES_USER
-            value: "postgres"
-          - name: POSTGRES_PASSWORD
-            value: "supersecret"
-          - name: POSTGRES_DB
-            value: "ecommerce"
-          ports:
-          - containerPort: 5432
+    metadata:
+      labels:
+        app: demo-postgres
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:15-alpine
+        env:
+        - name: POSTGRES_USER
+          value: "postgres"
+        - name: POSTGRES_PASSWORD
+          value: "supersecret"
+        - name: POSTGRES_DB
+          value: "ecommerce"
+        ports:
+        - containerPort: 5432
