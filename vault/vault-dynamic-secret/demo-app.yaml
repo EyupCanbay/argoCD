@@ -18,7 +18,7 @@ spec:
         app: vault-demo
       annotations:
         vault.hashicorp.com/agent-inject: "true" 
-        vault.hashicorp.com/role: "eso-role" 
+        vault.hashicorp.com/role: "ecommerce-app-role" 
         vault.hashicorp.com/agent-inject-secret-db-creds: "database/creds/ecommerce-db-role" 
         vault.hashicorp.com/agent-inject-template-db-creds: |
           {{- with secret "database/creds/ecommerce-db-role" -}}
