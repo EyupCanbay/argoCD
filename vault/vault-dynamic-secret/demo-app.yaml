@@ -17,9 +17,9 @@ spec:
       labels: 
         app: vault-demo
       annotations: 
-        vault.hashicorp.com/agent-inject: "ture"
-        vault.hashcorp.com/role: "eso-role"
-        vault.hashcorp.com/agent-inject-secret-db-creds: "secret/backend-api/database"
+        vault.hashicorp.com/agent-inject: "true"
+        vault.hashicorp.com/role: "eso-role"
+        vault.hashicorp.com/agent-inject-secret-db-creds: "secret/backend-api/database"
         vault.hashicorp.com/agent-inject-template-db-creds: |
           {{- with secret "secret/backend-api/database" -}}
           export DB_USER="postgres"
