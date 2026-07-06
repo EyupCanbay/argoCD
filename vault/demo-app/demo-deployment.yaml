@@ -25,4 +25,3 @@ spec:
               secretKeyRef:
                 name: db-secret
                 key: DATABASE_PASSWORD  
-

@@ -13,7 +13,6 @@ spec:
     server: 'https://kubernetes.default.svc'
     namespace: vault
   
-  # İŞTE EKLENECEK KISIM BURASI
   ignoreDifferences:
     - group: admissionregistration.k8s.io
       kind: MutatingWebhookConfiguration
