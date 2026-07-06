@@ -19,11 +19,11 @@ spec:
       annotations:
         vault.hashicorp.com/agent-inject: "true" 
         vault.hashicorp.com/role: "eso-role" 
-        vault.hashicorp.com/agent-inject-secret-db-creds: "secret/backend-api/database" # <-- "hashcorp" DÜZELTİLDİ
+        vault.hashicorp.com/agent-inject-secret-db-creds: "database/creds/ecommerce-db-role" 
         vault.hashicorp.com/agent-inject-template-db-creds: |
-          {{- with secret "secret/backend-api/database" -}}
-          export DB_USER="postgres"
-          export DB_PASS="{{ .Data.data.payment_api_key }}"
+          {{- with secret "database/creds/ecommerce-db-role" -}}
+          export DB_USER="{{ .Data.username }}"
+          export DB_PASS="{{ .Data.password }}"
           {{- end -}}
     spec:
       serviceAccountName: demo-app-sa
@@ -52,7 +52,7 @@ spec:
                   echo "bağlantı sıkıntılı"
                 fi
               else
-                echo "Vault dosyası henüz oluşmadı, Sidecar bekleniyor..." # <-- LOG EKRANI İÇİN DÜZELTİLDİ
+                echo "Vault dosyası henüz oluşmadı, Sidecar bekleniyor..."
               fi
 
               sleep 3
