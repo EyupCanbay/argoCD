@@ -1,0 +1,60 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata: 
+  name: demo-app-sa
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: vault-demo-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels: 
+      app: vault-demo 
+  template: 
+    metadata:
+      labels: 
+        app: vault-demo
+      annotations: 
+        vault.hashicorp.com/agent-inject: "ture"
+        vault.hashcorp.com/role: "eso-role"
+        vault.hashcorp.com/agent-inject-secret-db-creds: "secret/backend-api/database"
+        vault.hashicorp.com/agent-inject-template-db-creds: |
+          {{- with secret "secret/backend-api/database" -}}
+          export DB_USER="postgres"
+          export DB_PASS="{{ .Data.data.payment_api_key }}"
+          {{- end -}}
+    spec: 
+      serviceAccountName: demo-app-sa
+      containers:
+      - name: alpine-bash-tester
+        image: alpine:latest
+        command: ["/bin/sh", "-c"]
+        args: 
+          - |
+            apk add --no-cache postgresql-client
+
+            while true; do 
+              echo "-------------------------------------"
+              if [ -f /vault/secrets/db-creds ]; then
+                source /vault/secrets/db-creds
+
+                echo "[$(date)] Vault dosyasindan okunan kullanici: $DB_USER"
+                echo "[$(date)] Vault dosyasindan okunan sifre: $DB_PASS"
+
+                export PGPASSWORD=$DB_PASS 
+                psql -h demo-postgres -U $DB_USER -d ecommerce -c "SELECT 1;" > /dev/null 2>&1
+
+                if [ $? -eq 0 ]; then 
+                  echo "bağlantı sağlandı"
+                else 
+                  echo "bağlantı sıkıntılı"
+                fi
+              else  
+                echo "DURUM: DB Baglantisi HATALI! (Sifre yanlis veya DB kapali)"
+              fi
+
+              sleep 3
+            done
+
